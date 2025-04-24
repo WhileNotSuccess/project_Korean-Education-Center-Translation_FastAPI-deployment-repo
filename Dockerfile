@@ -13,6 +13,8 @@ RUN pip install --no-cache-dir -r requirements.txt
 # 5. 코드 복사
 COPY . .
 
+RUN python model_down.py
+
 # 6. 포트 노출 (FastAPI 기본 포트)
 EXPOSE 5000
 

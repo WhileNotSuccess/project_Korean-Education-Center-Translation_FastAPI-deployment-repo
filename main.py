@@ -21,7 +21,7 @@ app = FastAPI()
 origins = [
     'http://localhost:5173',
     'http://localhost:8080',
-    'http://localhost',
+    'http://localhost:3000',
     'https://localhost.com',
     'https://www.bapull.store',
     'https://www.voicevocab.store'
@@ -167,19 +167,23 @@ def translate_html(html, target):
 # POST 요청을 처리하는 번역 API 엔드포인트
 @app.post('/translate')
 async def translate_endpoint(body: HtmlBody, response: Response):
+    
     # 요청 바디에서 HTML 내용을 가져옴
     html = body.content
-    # 현재 target 언어를 영어("en")로 설정 (필요시 다른 언어로 확장 가능)
-    target = 'en'
+
     # HTML 내용이 없는 경우 400 에러 반환
     if not html:
         response.status_code = status.HTTP_400_BAD_REQUEST
         return {"error": "Missing content"}
     try:
         # HTML 전체를 번역
-        translated_html = translate_html(html, target)
+        translated_html_en = translate_html(html, 'en')
+        translated_html_ja = translate_html(html, 'ja')
         response.status_code = status.HTTP_200_OK
-        return {"translated_html": translated_html}
+        return {
+            "translated_html_en": translated_html_en,
+            "translated_html_ja": translated_html_ja,
+        }
     except Exception as e:
         # 번역 과정 중 에러 발생 시 500 에러 반환
         response.status_code = status.HTTP_500_INTERNAL_SERVER_ERROR
